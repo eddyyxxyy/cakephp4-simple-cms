@@ -1,7 +1,7 @@
 # CakePHP 4 - Simple CMS Application
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-![Tags: Latest by date](https://img.shields.io/github/v/tag/eddyyxxyy/cakephp4-simple-crm)
+![Tags: Latest by date](https://img.shields.io/github/v/tag/eddyyxxyy/cakephp4-simple-cms)
 
 
 Application based on the CakePHP 4 CMS tutorial, created for study and future consultation of CakePHP Framework
