@@ -49,7 +49,11 @@ class ArticlesController extends AppController
      */
     public function view(?string $slug = null) : void
     {
-        $article = $this->Articles->findBySlug($slug)->firstOrFail();
+        $article = $this->Articles
+            ->findBySlug($slug)
+            ->contain('Tags')
+            ->firstOrFail();
+
         $this->set(compact('article'));
     }
 
@@ -71,6 +75,8 @@ class ArticlesController extends AppController
             }
             $this->Flash->error(__('Unable to add your article.'));
         }
+        $tags = $this->Articles->Tags->find('list')->all();
+        $this->set('tags', $tags);
         $this->set('article', $article);
     }
 
@@ -80,20 +86,23 @@ class ArticlesController extends AppController
      * @param string $slug Article identifier
      * @return void
      */
-    public function edit(string $slug)
+    public function edit($slug)
     {
         $article = $this->Articles
             ->findBySlug($slug)
+            ->contain('Tags')
             ->firstOrFail();
 
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $this->Article->patchEntity($article, $this->request->getData());
-            if ($this->Article->save($article)) {
+            $this->Articles->patchEntity($article, $this->request->getData());
+            if ($this->Articles->save($article)) {
                 $this->Flash->success(__('Your article has been updated.'));
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('Unable to update your article.'));
         }
+        $tags = $this->Articles->Tags->find('list')->all();
+        $this->set(compact('tags'));
         $this->set(compact('article'));
     }
 
@@ -103,7 +112,7 @@ class ArticlesController extends AppController
      * @param string $slug Article identifier.
      * @return void
      */
-    public function delete(string $slug)
+    public function delete($slug)
     {
         $this->request->allowMethod(['post', 'delete']);
 
@@ -112,5 +121,24 @@ class ArticlesController extends AppController
             $this->Flash->success(__('The {0} article has been deleted.', $article->title));
             return $this->redirect(['action' => 'index']);
         }
+    }
+
+    /**
+     * Get articles based on the tags from `pass` param.
+     *
+     * @return void
+     */
+    public function tags()
+    {
+        $tags = $this->request->getParam('pass');
+        $articles = $this->Articles->find('tagged', [
+            'tags' => $tags
+            ])
+            ->all();
+
+        $this->set([
+            'articles' => $articles,
+            'tags' => $tags
+        ]);
     }
 }
