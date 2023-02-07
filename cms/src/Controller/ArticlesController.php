@@ -80,7 +80,7 @@ class ArticlesController extends AppController
      * @param string $slug Article identifier
      * @return void
      */
-    public function edit(string $slug): ?\Cake\Http\Response
+    public function edit(string $slug)
     {
         $article = $this->Articles
             ->findBySlug($slug)
