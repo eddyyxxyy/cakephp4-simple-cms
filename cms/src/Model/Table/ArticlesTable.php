@@ -23,7 +23,10 @@ class ArticlesTable extends Table
     public function initialize(array $config): void
     {
         $this->addBehavior('Timestamp');
-        $this->belongsToMany('Tags');
+        $this->belongsToMany('Tags', [
+            'joinTable' => 'articles_tags',
+            'dependent' => true
+        ]);
     }
 
     /**
@@ -48,6 +51,12 @@ class ArticlesTable extends Table
         }
     }
 
+    /**
+     * Takes in `tagString` and filter it, then turn it unique.
+     *
+     * @param string $tagString
+     * @return void
+     */
     protected function _buildTags($tagString)
     {
         $newTags = array_map('trim', explode(',', $tagString));
