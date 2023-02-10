@@ -10,6 +10,11 @@ use Cake\Collection\Collection;
  */
 class Article extends Entity
 {
+    /**
+     * Defines accessible data in our Entity.
+     *
+     * @var array
+     */
     protected $_accessible = [
         '*' => true,
         'id' => false,
@@ -17,6 +22,11 @@ class Article extends Entity
         'tag_string' => true,
     ];
 
+    /**
+     * Implements a simple way to access formatted tags.
+     *
+     * @return string
+     */
     protected function _getTagString()
     {
         if (isset($this->_fields['tag_string'])) {
