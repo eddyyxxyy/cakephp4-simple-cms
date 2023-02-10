@@ -12,6 +12,64 @@ namespace App\Controller;
 class UsersController extends AppController
 {
     /**
+     * Prevents infinite redirect looping.
+     *
+     * Adds 'login' action to unauthenticated action to be accessed.
+     *
+     * @param \Cake\Event\EventInterface $event
+     * @return void
+     */
+    public function beforeFilter(\Cake\Event\EventInterface $event)
+    {
+        parent::beforeFilter($event);
+
+        $this->Authentication->addUnauthenticatedActions(['login', 'add']);
+    }
+
+    /**
+     * Login action for user's to log in.
+     *
+     * Allows get and post requests and validate login credentials.
+     * If the `result` is valid, redirects to Articles:index, otherwise
+     * displays Flash error message.
+     *
+     * @return void
+     */
+    public function login()
+    {
+        $this->request->allowMethod(['get', 'post']);
+        $result = $this->Authentication->getResult();
+
+        if ($result && $result->isValid()) {
+            $redirect = $this->request->getQuery('redirect', [
+                'controller' => 'Articles',
+                'action' => 'index',
+            ]);
+
+            return $this->redirect($redirect);
+            }
+
+        if ($this->request->is('post') && !$result->isValid()) {
+            $this->Flash->error(__('Invalid username or password'));
+        }
+    }
+
+    /**
+     * Redirects the user to login after logout.
+     *
+     * @return \Cake\Http\Response|null Renders view
+     */
+    public function logout()
+    {
+        $result = $this->Authentication->getResult();
+
+        if ($result && $result->isValid()) {
+            $this->Authentication->logout();
+            return $this->redirect(['controller' => 'Users', 'action' => 'login']);
+        }
+    }
+
+    /**
      * Index method
      *
      * @return \Cake\Http\Response|null|void Renders view
